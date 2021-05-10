@@ -1,6 +1,6 @@
-import 'package:desk/views/home.dart';
-import 'package:desk/views/mangaSearch.dart';
 import 'package:desk/views/search.dart';
+import 'package:desk/views/home.dart';
+import 'package:desk/views/library.dart';
 import 'package:flutter/material.dart';
 
 class Nav extends StatefulWidget {
@@ -15,7 +15,7 @@ class _NavState extends State<Nav> {
   List<Widget> _widgetOptions = [
     Home(),
     Search(),
-    MangaSearch(),
+    Library(),
   ];
 
   _onItemTapped(index) {
@@ -39,12 +39,12 @@ class _NavState extends State<Nav> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_sharp),
-            label: 'Anime',
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.graphic_eq),
-            label: 'Manga',
+            icon: Icon(Icons.library_books),
+            label: 'Library',
           )
         ],
         currentIndex: _selectedIndex,

@@ -1,31 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:desk/constants/constants.dart';
-import 'package:desk/views/mangaScreen.dart';
+import 'package:desk/views/animeScreen.dart';
 import 'package:desk/widgets/widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-class MangaSearch extends StatefulWidget {
-  MangaSearch({Key key}) : super(key: key);
+class AnimeSearch extends StatefulWidget {
+  AnimeSearch({Key key}) : super(key: key);
 
   @override
-  _MangaSearchState createState() => _MangaSearchState();
+  _AnimeSearchState createState() => _AnimeSearchState();
 }
 
-class _MangaSearchState extends State<MangaSearch> {
+class _AnimeSearchState extends State<AnimeSearch> {
   TextEditingController _searchText = TextEditingController();
   FocusNode textNode = FocusNode();
   List searchResults = [];
+  ScrollController _scrollControler = ScrollController();
   bool searching = false;
-  ScrollController _scrollController = ScrollController();
-
   getSearch() async {
     try {
-      Box mangaSearchList = await Hive.openBox('mangaSearch');
-      if (mangaSearchList.get(_searchText.text) != null) {
+      Box animeSearchList = await Hive.openBox('animeSearch');
+
+      if (animeSearchList.get(_searchText.text) != null) {
         setState(() {
-          searchResults = mangaSearchList.get(_searchText.text);
+          searchResults = animeSearchList.get(_searchText.text);
           searching = false;
         });
       }
@@ -33,12 +33,12 @@ class _MangaSearchState extends State<MangaSearch> {
         setState(() {
           searching = true;
         });
-        Response response = await Dio()
-            .get('https://$ip/manga/search?search=${_searchText.text}');
+        Response response =
+            await Dio().get('https://$ip/search?search=${_searchText.text}');
         if (mounted) {
           setState(() {
-            mangaSearchList.put(_searchText.text, response.data);
-            searchResults = mangaSearchList.get(_searchText.text);
+            animeSearchList.put(_searchText.text, response.data);
+            searchResults = animeSearchList.get(_searchText.text);
             searching = false;
           });
         }
@@ -58,7 +58,11 @@ class _MangaSearchState extends State<MangaSearch> {
                   onTap: () {
                     FocusManager.instance.primaryFocus.unfocus();
                   },
-                  child: SizedBox(),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight: getSize(context).height,
+                    ),
+                  ),
                 )
               : searching && searchResults.length == 0
                   ? Center(
@@ -77,31 +81,30 @@ class _MangaSearchState extends State<MangaSearch> {
                           child: Scrollbar(
                             isAlwaysShown: true,
                             thickness: 6,
-                            controller: _scrollController,
+                            controller: _scrollControler,
                             child: GridView.count(
-                              controller: _scrollController,
                               crossAxisCount: 2,
                               childAspectRatio: 0.6,
+                              controller: _scrollControler,
                               children: searchResults.map<Widget>((result) {
                                 return Column(
                                   children: [
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () {
+                                        FocusManager.instance.primaryFocus
+                                            .unfocus();
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => MangaScreen(
+                                            builder: (context) => AnimeScreen(
                                               name: result['name'],
-                                              detailUrl:
-                                                  '$domain${result['detailUrl']}',
-                                              imageUrl:
-                                                  "$domain${result['imgUrl']}",
+                                              animeUrl: result['url'],
                                             ),
                                           ),
                                         );
                                       },
                                       child: CachedNetworkImage(
-                                        imageUrl: "$domain${result['imgUrl']}",
+                                        imageUrl: "${result['imageUrl']}",
                                         fit: BoxFit.cover,
                                         width:
                                             MediaQuery.of(context).size.width /
@@ -142,13 +145,15 @@ class _MangaSearchState extends State<MangaSearch> {
                   color: Colors.white,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Write Manga Name Here',
+                  hintText: 'Write Anime Name Here',
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      _searchText.text = '';
-                      searchResults = [];
                       FocusManager.instance.primaryFocus.unfocus();
-                      setState(() {});
+                      setState(() {
+                        _searchText.text = '';
+                        searchResults = [];
+                        searching = false;
+                      });
                     },
                     child: Icon(
                       Icons.close,

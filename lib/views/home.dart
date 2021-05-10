@@ -1,9 +1,14 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:desk/constants/constants.dart';
 import 'package:desk/views/animeScreen.dart';
+import 'package:desk/views/settings.dart';
 import 'package:desk/views/videoScreen.dart';
 import 'package:desk/widgets/widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -19,43 +24,50 @@ class _HomeState extends State<Home> {
   List details = [];
   Dio _dio = Dio();
   bool notResponding = false;
+
   @override
   void initState() {
     super.initState();
-    getRecent();
-    getPopular();
+    getData();
     getDetails();
   }
 
-  getRecent() async {
+  getData() async {
+    Box home = await Hive.openBox('home');
     try {
-      Response response = await _dio.get(
-        'https://$ip/recent',
-      );
-      if (response.data.length != 0) {
+      if (home.get('recents') != null && home.get('populars') != null) {
         setState(() {
-          recents = response.data;
-        });
-      } else {
-        setState(() {
-          notResponding = true;
+          recents = home.get('recents');
+          populars = home.get('populars');
         });
       }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  getPopular() async {
-    try {
-      Response response = await _dio.get(
+      Response recentResponse = await _dio.get(
+        'https://$ip/recent',
+      );
+      setState(() {
+        home.put('recents', recentResponse.data);
+        recents = home.get('recents');
+      });
+      Response popularResponse = await _dio.get(
         'https://$ip/popular',
       );
       setState(() {
-        populars = response.data;
+        home.put('populars', popularResponse.data);
+        populars = home.get('populars');
       });
-    } catch (e) {
-      print(e.toString());
+    } catch (SocketExcetion) {
+      Timer.periodic(Duration(seconds: 10), (e) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Internet Not Available',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+          ),
+        );
+      });
     }
   }
 
@@ -83,6 +95,23 @@ class _HomeState extends State<Home> {
         title: Text(
           'Overview',
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings_outlined,
+            ),
+            tooltip: 'Settings',
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Settings(),
+                ),
+              );
+            },
+          )
+        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -126,45 +155,40 @@ class _HomeState extends State<Home> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Material(
-                                          clipBehavior: Clip.hardEdge,
-                                          color: Colors.transparent,
-                                          child: Ink.image(
-                                            image: NetworkImage(
-                                              "${recents[index]['imgUrl']}",
-                                            ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return VideoScreen(
+                                                    name: recents[index]
+                                                        ['animeName'],
+                                                    videoUrl: recents[index]
+                                                        ['videoUrl'],
+                                                    recentScreen: true,
+                                                    epNumber: int.parse(
+                                                          recents[index]
+                                                                  ['extra']
+                                                              .substring(
+                                                                  8,
+                                                                  recents[index]
+                                                                          [
+                                                                          'extra']
+                                                                      .length),
+                                                        ) -
+                                                        1,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "${recents[index]['imgUrl']}",
                                             fit: BoxFit.cover,
                                             width: 120,
                                             height: 200,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return VideoScreen(
-                                                        name: recents[index]
-                                                            ['animeName'],
-                                                        videoUrl: recents[index]
-                                                            ['videoUrl'],
-                                                        recentScreen: true,
-                                                        epNumber: int.parse(
-                                                              recents[index]
-                                                                      ['extra']
-                                                                  .substring(
-                                                                      8,
-                                                                      recents[index]
-                                                                              [
-                                                                              'extra']
-                                                                          .length),
-                                                            ) -
-                                                            1,
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              },
-                                            ),
                                           ),
                                         ),
                                         SizedBox(
@@ -204,34 +228,28 @@ class _HomeState extends State<Home> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Material(
-                                          clipBehavior: Clip.hardEdge,
-                                          color: Colors.transparent,
-                                          child: Ink.image(
-                                            image: NetworkImage(
-                                              "${populars[index]['imgUrl']}",
-                                            ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return AnimeScreen(
+                                                    name: populars[index]
+                                                        ['animeName'],
+                                                    animeUrl: populars[index]
+                                                        ['videoUrl'],
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "${populars[index]['imgUrl']}",
                                             fit: BoxFit.cover,
                                             width: 120,
                                             height: 200,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return AnimeScreen(
-                                                        name: populars[index]
-                                                            ['animeName'],
-                                                        animeUrl:
-                                                            populars[index]
-                                                                ['videoUrl'],
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              },
-                                            ),
                                           ),
                                         ),
                                         SizedBox(

@@ -3,6 +3,7 @@ import 'package:desk/constants/constants.dart';
 import 'package:desk/provider/watching_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class MangaView extends StatefulWidget {
@@ -16,8 +17,7 @@ class MangaView extends StatefulWidget {
 }
 
 class _MangaViewState extends State<MangaView> {
-  List images = [];
-  bool _loading = true;
+  List images;
   Watching reading;
   ScrollController _scrollController = ScrollController();
   @override
@@ -29,12 +29,20 @@ class _MangaViewState extends State<MangaView> {
 
   getChapterPages() async {
     try {
+      Box mangaChapters = await Hive.openBox('mangaChapters');
+      if (mangaChapters.get(widget.detailUrl) != null) {
+        setState(() {
+          images = mangaChapters.get(widget.detailUrl);
+        });
+      }
       Response response = await Dio()
           .get('https://$ip/manga/chapter/?chapterUrl=${widget.detailUrl}');
-      setState(() {
-        images = response.data;
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          mangaChapters.put(widget.detailUrl, response.data);
+          images = response.data;
+        });
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -46,7 +54,7 @@ class _MangaViewState extends State<MangaView> {
       appBar: AppBar(
         title: Text(widget.name),
       ),
-      body: _loading
+      body: images == null
           ? LinearProgressIndicator()
           : Stack(
               children: [

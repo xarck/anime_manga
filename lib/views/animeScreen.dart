@@ -3,6 +3,7 @@ import 'package:desk/views/videoScreen.dart';
 import 'package:dio/dio.dart';
 import 'package:desk/constants/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class AnimeScreen extends StatefulWidget {
@@ -19,7 +20,6 @@ class AnimeScreen extends StatefulWidget {
 
 class _AnimeScreenState extends State<AnimeScreen> {
   var details;
-  bool _loading = true;
   @override
   void initState() {
     super.initState();
@@ -28,14 +28,23 @@ class _AnimeScreenState extends State<AnimeScreen> {
 
   getAnime() async {
     try {
+      var animeList = await Hive.openBox('animeList');
+      var watching = Provider.of<Watching>(context, listen: false);
+      if (animeList.get(widget.animeUrl) != null) {
+        setState(() {
+          details = animeList.get(widget.animeUrl);
+        });
+        watching.intialization(details);
+      }
       Response response =
           await Dio().get('https://$ip/details/?url=${widget.animeUrl}');
-      var watching = Provider.of<Watching>(context, listen: false);
       watching.intialization(response.data);
-      setState(() {
-        details = response.data;
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          animeList.put(widget.animeUrl, response.data);
+          details = animeList.get(widget.animeUrl);
+        });
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -46,8 +55,24 @@ class _AnimeScreenState extends State<AnimeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.name),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.bookmark_border_outlined,
+              ),
+              color: Hive.box('libraryWatch').get(widget.animeUrl) != null
+                  ? Colors.green
+                  : Colors.red,
+              onPressed: () {
+                Box watchList = Hive.box('libraryWatch');
+                Hive.box('libraryWatch').get(widget.animeUrl) != null
+                    ? watchList.delete(widget.animeUrl)
+                    : watchList.put(widget.animeUrl, details);
+                setState(() {});
+              })
+        ],
       ),
-      body: _loading
+      body: details == null
           ? LinearProgressIndicator()
           : Scrollbar(
               isAlwaysShown: true,
@@ -86,4 +111,8 @@ class _AnimeScreenState extends State<AnimeScreen> {
             ),
     );
   }
+}
+
+removeNonASCII(String str) {
+  return str.replaceAll(RegExp(r'[^\x20-\x7E]'), '');
 }

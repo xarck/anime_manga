@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class Watching extends ChangeNotifier {
   var watching;
   var reading;
-  intialization(data) async {
+  intialization(data) {
     watching = data;
     notifyListeners();
   }
