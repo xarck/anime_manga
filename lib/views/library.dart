@@ -198,3 +198,12 @@ const headStyle = TextStyle(
   color: Colors.blue,
   fontSize: 24,
 );
+
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/1.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/3.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/4.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/5.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/6.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/7.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/8.jpeg?raw=true" height="800" width="450">
+<img src="https://github.com/iamashking123/anime_manga/blob/master/screenshot/9.jpeg?raw=true" height="800" width="450">
