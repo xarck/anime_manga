@@ -1,7 +1,7 @@
 name: desk
 description: A new Flutter project.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 3.0.0
+version: 3.1.0
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -23,6 +23,7 @@ dependencies:
   provider: ^5.0.0
   share: ^2.0.1
   url_launcher: ^6.0.3
+  zoom_pinch_overlay: ^1.1.2
 
 dev_dependencies:
   flutter_test:
