@@ -66,39 +66,39 @@ class _LibraryState extends State<Library> {
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 10,
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return AnimeScreen(
-                                                name: watchingList[index]
-                                                    ['name'],
-                                                animeUrl: watchingList[index]
-                                                    ['url'],
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return AnimeScreen(
+                                            name: watchingList[index]['name'],
+                                            animeUrl: watchingList[index]
+                                                ['url'],
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CachedNetworkImage(
                                         imageUrl:
                                             "${watchingList[index]['imageUrl']}",
                                         fit: BoxFit.cover,
                                         width: 120,
                                         height: 200,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    title(
-                                        text: "${watchingList[index]['name']}"),
-                                  ],
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      title(
+                                          text:
+                                              "${watchingList[index]['name']}"),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -143,42 +143,41 @@ class _LibraryState extends State<Library> {
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 10,
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return MangaScreen(
-                                                name: readingList[index]
-                                                    ['name'],
-                                                detailUrl:
-                                                    '${readingList[index]['url']}',
-                                                imageUrl:
-                                                    "$domain${readingList[index]['imageUrl']}",
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return MangaScreen(
+                                            name: readingList[index]['name'],
+                                            detailUrl:
+                                                '${readingList[index]['url']}',
+                                            imageUrl:
+                                                "${readingList[index]['imageUrl']}",
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CachedNetworkImage(
                                         imageUrl:
                                             "${readingList[index]['imageUrl']}",
                                         fit: BoxFit.cover,
                                         width: 120,
                                         height: 200,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    title(
-                                      text: "${readingList[index]['name']}",
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      title(
+                                        text: "${readingList[index]['name']}",
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },

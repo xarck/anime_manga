@@ -87,38 +87,37 @@ class _AnimeSearchState extends State<AnimeSearch> {
                               childAspectRatio: 0.6,
                               controller: _scrollControler,
                               children: searchResults.map<Widget>((result) {
-                                return Column(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        FocusManager.instance.primaryFocus
-                                            .unfocus();
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => AnimeScreen(
-                                              name: result['name'],
-                                              animeUrl: result['url'],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
+                                return GestureDetector(
+                                  onTap: () {
+                                    FocusManager.instance.primaryFocus
+                                        .unfocus();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AnimeScreen(
+                                          name: result['name'],
+                                          animeUrl: result['url'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      CachedNetworkImage(
                                         imageUrl: "${result['imageUrl']}",
                                         fit: BoxFit.cover,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.3,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                3.2,
+                                        width: 150,
+                                        height: 240,
+                                        fadeInDuration: Duration(
+                                          seconds: 0,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    title(
-                                      text: '${result['name']}',
-                                    )
-                                  ],
+                                      SizedBox(height: 10),
+                                      title(
+                                        text: '${result['name']}',
+                                      )
+                                    ],
+                                  ),
                                 );
                               }).toList(),
                             ),

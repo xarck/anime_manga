@@ -83,39 +83,36 @@ class _MangaSearchState extends State<MangaSearch> {
                               crossAxisCount: 2,
                               childAspectRatio: 0.6,
                               children: searchResults.map<Widget>((result) {
-                                return Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MangaScreen(
-                                              name: result['name'],
-                                              detailUrl:
-                                                  '$domain${result['detailUrl']}',
-                                              imageUrl:
-                                                  "$domain${result['imgUrl']}",
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MangaScreen(
+                                          name: result['name'],
+                                          detailUrl:
+                                              '$domain${result['detailUrl']}',
+                                          imageUrl:
+                                              "$domain${result['imgUrl']}",
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      CachedNetworkImage(
                                         imageUrl: "$domain${result['imgUrl']}",
                                         fit: BoxFit.cover,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.3,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                3.2,
+                                        width: 150,
+                                        height: 240,
+                                        fadeInDuration: Duration(seconds: 0),
                                       ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    title(
-                                      text: '${result['name']}',
-                                    )
-                                  ],
+                                      SizedBox(height: 10),
+                                      title(
+                                        text: '${result['name']}',
+                                      )
+                                    ],
+                                  ),
                                 );
                               }).toList(),
                             ),

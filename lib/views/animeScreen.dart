@@ -1,5 +1,5 @@
-import 'package:desk/provider/watching_provider.dart';
-import 'package:desk/views/videoScreen.dart';
+import 'package:desk/provider/watchingProvider.dart';
+import 'package:desk/views/animeView.dart';
 import 'package:dio/dio.dart';
 import 'package:desk/constants/constants.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,7 @@ class AnimeScreen extends StatefulWidget {
 
 class _AnimeScreenState extends State<AnimeScreen> {
   var details;
+  Box animeList;
   @override
   void initState() {
     super.initState();
@@ -28,21 +29,27 @@ class _AnimeScreenState extends State<AnimeScreen> {
 
   getAnime() async {
     try {
-      var animeList = await Hive.openBox('animeList');
+      animeList = await Hive.openBox('animeList');
       var watching = Provider.of<Watching>(context, listen: false);
       if (animeList.get(widget.animeUrl) != null) {
         setState(() {
-          details = animeList.get(widget.animeUrl);
+          details = animeList.get(widget.animeUrl)['animeData'];
         });
         watching.intialization(details);
       }
+
       Response response =
           await Dio().get('https://$ip/details/?url=${widget.animeUrl}');
       watching.intialization(response.data);
       if (mounted) {
+        if (animeList.get(widget.animeUrl) != null) {
+          animeList.put(widget.animeUrl,
+              {...animeList.get(widget.animeUrl), 'animeData': response.data});
+        } else {
+          animeList.put(widget.animeUrl, {'animeData': response.data});
+        }
         setState(() {
-          animeList.put(widget.animeUrl, response.data);
-          details = animeList.get(widget.animeUrl);
+          details = animeList.get(widget.animeUrl)['animeData'];
         });
       }
     } catch (e) {
@@ -54,22 +61,24 @@ class _AnimeScreenState extends State<AnimeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.name),
+        title: Text('${widget.name}'),
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.bookmark_border_outlined,
-              ),
-              color: Hive.box('libraryWatch').get(widget.animeUrl) != null
-                  ? Colors.green
-                  : Colors.red,
-              onPressed: () {
-                Box watchList = Hive.box('libraryWatch');
-                Hive.box('libraryWatch').get(widget.animeUrl) != null
-                    ? watchList.delete(widget.animeUrl)
-                    : watchList.put(widget.animeUrl, details);
-                setState(() {});
-              })
+          details == null
+              ? SizedBox()
+              : IconButton(
+                  icon: Icon(
+                    Icons.bookmark_border_outlined,
+                  ),
+                  color: Hive.box('libraryWatch').get(widget.animeUrl) != null
+                      ? Colors.green
+                      : Colors.red,
+                  onPressed: () {
+                    Box watchList = Hive.box('libraryWatch');
+                    Hive.box('libraryWatch').get(widget.animeUrl) != null
+                        ? watchList.delete(widget.animeUrl)
+                        : watchList.put(widget.animeUrl, details);
+                    setState(() {});
+                  })
         ],
       ),
       body: details == null
@@ -82,12 +91,27 @@ class _AnimeScreenState extends State<AnimeScreen> {
                 crossAxisCount: 5,
                 children: details['episodes'].map<Widget>((episode) {
                   return TextButton(
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateColor.resolveWith(
+                        (states) => episode['episode'].toString() ==
+                                animeList.get(widget.animeUrl)['lastEpisode']
+                            ? Colors.blue
+                            : Colors.red,
+                      ),
+                    ),
                     onPressed: () {
+                      animeList.put(
+                        widget.animeUrl,
+                        {
+                          'animeData': details,
+                          'lastEpisode': episode['episode'].toString(),
+                        },
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return VideoScreen(
+                            return AnimeView(
                               name: details['name'],
                               videoUrl: episode['url'],
                               epNumber: details['episodes'].indexOf(
@@ -111,8 +135,4 @@ class _AnimeScreenState extends State<AnimeScreen> {
             ),
     );
   }
-}
-
-removeNonASCII(String str) {
-  return str.replaceAll(RegExp(r'[^\x20-\x7E]'), '');
 }
