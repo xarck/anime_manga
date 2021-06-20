@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:desk/constants/constants.dart';
@@ -53,21 +53,15 @@ class _HomeState extends State<Home> {
         populars = home.get('populars');
       });
     } catch (SocketExcetion) {
-      Timer.periodic(
-        Duration(seconds: 10),
-        (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Internet Not Available / Server Not Responding',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Internet Not Available / Server Not Responding',
+            style: TextStyle(
+              color: Colors.red,
             ),
-          );
-          setState(() {});
-        },
+          ),
+        ),
       );
     }
   }

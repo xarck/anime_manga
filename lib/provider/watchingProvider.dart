@@ -29,14 +29,11 @@ class Watching extends ChangeNotifier {
     notifyListeners();
   }
 
-  setLastChapter(chapterName) {
+  setLastChapter(chapterName, index) {
     Box mangaList = Hive.box('mangaList');
     mangaList.put(
       _detailUrl,
-      {
-        'mangaData': reading,
-        'lastChapter': '$chapterName',
-      },
+      {'mangaData': reading, 'lastChapter': '$chapterName', 'lastIndex': index},
     );
     notifyListeners();
   }

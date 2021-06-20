@@ -60,7 +60,7 @@ class _SettingsState extends State<Settings> {
             children: [
               _info == null
                   ? SizedBox()
-                  : _info[1]['updates'] == '3.0.1'
+                  : _info[1]['updates'] == '3.0.2'
                       ? SizedBox()
                       : Container(
                           margin: EdgeInsets.symmetric(
@@ -136,11 +136,10 @@ class _SettingsState extends State<Settings> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('1. Now Every Request And Image Is Cached'),
-                    Text('2. Bookmark Support'),
-                    Text('3. UI Update'),
-                    Text('4. Download Support For Both Anime And Manga'),
-                    Text('5. Bugs Fixed'),
+                    Text('1. Double Tap To Zoom Added In Manga'),
+                    Text('2. Manga Download Bug Fixed'),
+                    Text('3. UI Updates'),
+                    Text('4. Continue With Last Manga Chapter'),
                   ],
                 ),
               ),
@@ -169,9 +168,8 @@ class _SettingsState extends State<Settings> {
                         '1. You Can Read Mangas Offline If Manga Chapters Are Cached.'),
                     Text('2. Always Check Settings For Updates.'),
                     Text(
-                        "3. Manga Download May Not Work Sometimes, In That Cases Just Try Again To Download."),
-                    Text(
-                        "4. 1 Download At A Time Is Supported Due To Server Limitations.")
+                        "3. One Anime Download At A Time Is Supported Due To Server Limitations."),
+                    Text("4. If App Is Not Working Then Clear Cache.")
                   ],
                 ),
               ),
