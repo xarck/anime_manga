@@ -60,7 +60,7 @@ class _SettingsState extends State<Settings> {
             children: [
               _info == null
                   ? SizedBox()
-                  : _info[1]['updates'] == '3.0.2'
+                  : _info[1]['updates'] == '3.0.3'
                       ? SizedBox()
                       : Container(
                           margin: EdgeInsets.symmetric(

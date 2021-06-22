@@ -162,29 +162,36 @@ class _MangaScreenState extends State<MangaScreen> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          int lastIndex = mangaList.get(widget.detailUrl)['lastIndex'];
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MangaView(
-                name: chapters[lastIndex]['name'],
-                detailUrl: '$domain/${chapters[lastIndex]['url']}',
-                chapterNumber: lastIndex,
-              ),
-              settings: RouteSettings(
-                arguments: lastIndex,
+      floatingActionButton: chapters == null
+          ? SizedBox()
+          : FloatingActionButton(
+              onPressed: () {
+                int lastIndex =
+                    mangaList.get(widget.detailUrl)['lastIndex'] != null
+                        ? mangaList.get(widget.detailUrl)['lastIndex']
+                        : chapters.length - 1;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MangaView(
+                      name: chapters[lastIndex]['name'],
+                      detailUrl: '$domain/${chapters[lastIndex]['url']}',
+                      chapterNumber: lastIndex,
+                    ),
+                    settings: RouteSettings(
+                      arguments: lastIndex,
+                    ),
+                  ),
+                );
+              },
+              tooltip: "Continue",
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.play_arrow_outlined,
+                color: Colors.black,
+                size: 40,
               ),
             ),
-          );
-        },
-        backgroundColor: Colors.white24,
-        child: Icon(
-          Icons.play_arrow,
-          color: Colors.purple,
-        ),
-      ),
     );
   }
 }
