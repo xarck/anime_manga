@@ -3,7 +3,7 @@
 ---
 
 ## **NOTE:**
-Anime Section is not going to work because of 4anime shutdown. Manga Section is working as usual.
+Anime Section is not going to work because of 4anime shutdown. Manga Section is working as usual.<br />
 Manga Section Contains 18+ content.<br />
 Sometimes App may take some time to load.<br />
 Constants Folder is removed from repo because it contains api Url and it also contains a getSize() Function That returns device dimensions.
